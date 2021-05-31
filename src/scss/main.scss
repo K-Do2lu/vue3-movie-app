@@ -1,0 +1,27 @@
+// Default variable overrides (재정의 파트)
+
+$primary: #FDC000; 
+// 재정의가 명시되는 부분을 variables 파일 위쪽에서 되어야함 
+// primary 이름의 변수를 노란색으로 재정의 
+
+// Required (부트스트랩 커스터마이즈 문서에서 가져옴)
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins"; 
+
+$theme-colors: ( 
+  // 하나라도 재정의가 안된 것이 있다면 여기에 위치해야 하고,
+  // 모든 key가 다 재정의 되었다면 위쪽에 올려도 문제 없음 
+  // 그 이유는 $value에 있는 값들이 모두 "../../node_modules/bootstrap/scss/variables" 여기에서 오기 때문임
+  
+  "primary":    $primary,
+  "secondary":  $secondary,
+  "success":    $success,
+  "info":       $info,
+  "warning":    $warning,
+  "danger":     $danger,
+  "light":      $light,
+  "dark":       $dark
+);
+
+@import "../../node_modules/bootstrap/scss/bootstrap" // 부트스트랩

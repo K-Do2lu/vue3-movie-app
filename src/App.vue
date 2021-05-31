@@ -1,23 +1,14 @@
 <template>
-  <h1>{{ message }}</h1>
-  <HelloWorld />
+  <router-view />
+  <!-- router-view: 라우팅 요소가 출력되는 태그-->
 </template> 
 
 <script>
-import HelloWorld from '~/components/HelloWorld'
 export default {
-  components: {
-    HelloWorld
-  },
-  data() {
-    return {
-      message: "Hello Vue!!!"
-    }
-  }
-  
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "~/scss/main"; // scss 파일 연동 
 
 </style>
