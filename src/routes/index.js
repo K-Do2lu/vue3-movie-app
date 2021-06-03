@@ -1,5 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from './Home'
+import Movie from './Movie'
 import About from './About'
 
 
@@ -15,8 +16,12 @@ export default createRouter({
       component: Home // 메인 페이지에 연결할 컴포넌트 
     },
     {
-      path: '/about', // about 페이지 경로 
-      component: About // about 페이지에 연결할 컴포넌트 
+      path: '/movie', 
+      component: Movie 
+    },
+    {
+      path: '/about', 
+      component: About 
     }
   ]
 })
