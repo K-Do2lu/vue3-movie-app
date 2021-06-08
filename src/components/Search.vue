@@ -32,7 +32,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
   data() {
     return {
@@ -65,9 +64,15 @@ export default {
   },
   methods: {
     async apply() { // search movies...
-    const OMDB_API_KEY = '7035c60c'
-    const res = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${this.title}&type=${this.type}&y=${this.year}&page=1`) 
-    console.log(res)
+      this.$store.dispatch('movie/searchMovies', { 
+        // store의 movie 모듈에서 searchMovies 라는 actions를 실행하며, 
+        // payload 라는 매개변수에 아래의 4가지 데이터를 전달(=dispatch)한다. 
+        // 아래의 4가지 데이터는 v-model로 연동되어 검색에 따라서 값이 바뀌는 데이터다. 
+        title:this.title,
+        type:this.type,
+        number:this.number,
+        year:this.year
+      }) 
     }
   }
 }
