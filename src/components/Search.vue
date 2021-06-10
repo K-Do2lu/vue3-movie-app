@@ -37,7 +37,7 @@ export default {
     return {
       title: '',
       type: 'movie',
-      number: 10,
+      number: 10, // 한 페이지당 읽어올 데이터의 수를 정의
       year: '',
       filters: [
         {

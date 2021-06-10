@@ -1,4 +1,9 @@
 import axios from 'axios'
+import _uniqBy from 'lodash/uniqBy' 
+// lodash: npm i lodash 명령어를 통해서 설치, 공식문서 있으니 구글링 권장 
+// uniqBy: 객체 데이터가 담긴 배열에서 특정 값(ex. key)을 기준으로 설정하여 
+//         배열의 중복값을 제거하는 라이브러리
+
 export default {
   // namespaced: 스토어 모듈임을 명시하는 속성(boolean)
   namespaced: true,
@@ -35,7 +40,7 @@ export default {
   // 3. context는 state, getters, commit을 포함하고 있다. 
   // 4. 객체 구조분해를 사용하면 context = {state, getters, commit} 이다. 
   actions:{
-    async searchMovies({commit}, payload) { 
+    async searchMovies({state, commit}, payload) { 
       // context 또는 payload라는 매개변수의 이름은 언제든지 바뀔 수 있다.
       // 첫번째 매개변수(= context): state, mutations, getters 활용을 위한 매개변수
       // 두번째 매개변수(= payload): 다른 곳으로부터 들어오는 데이터, 매개변수 
@@ -43,11 +48,32 @@ export default {
       const {title, type, number, year} = payload
       const OMDB_API_KEY = '7035c60c'
 
+      // imdb API - 영화 검색 정보를 받아오는 API 
       const res = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=1`) 
       const {Search, totalResults } = res.data // imdb API에 보면 res 안에 저런 데이터가 들어있음 
       commit('updateState', {
-        movies: Search
+        movies: _uniqBy(Search, 'imdbID') // imdbID라는 키를 기준으로 중복 값을 걸러준다. 
       })
+      const total = parseInt(totalResults, 10) // totalResults를 10진법의 숫자로 변형한다.
+      const pageLength = Math.ceil(total/10) // total을 10으로 나눈값을 올림처리 - 페이지 개수 설정
+      
+      // 추가요청 
+      if (pageLength > 1) {
+        for(let page = 2; page <= pageLength; page += 1) {
+          if(page > (number / 10)) break  // 한 페이지에서 읽는 데이터의 수를 검증 number 기본값은 10
+          const res = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`)
+          const {Search} = res.data
+          commit('updateState', { 
+            // 기존의 movies의 데이터를 포함하고
+            // 새로 불러온 페이지의 검색결과를 추가하는 방법 
+            movies: [
+              ...state.movies,
+              ..._uniqBy(Search, 'imdbID')
+            ] // ... = 전개연산자 
+          }) 
+        }
+      }
+
     }
   }
 }
