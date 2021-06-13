@@ -1,10 +1,15 @@
 <template>
   <div class="container">
     <div class="inner">
-      <MovieItem
-        v-for="movie in movies" 
-        :key="movie.imdbID"
-        :movie="movie" /> <!-- v-for의 movies는 computed로부터 오는 것 --> 
+      <div class="message">
+        {{ message }}
+      </div>
+      <div class="movies">
+        <MovieItem
+          v-for="movie in movies" 
+          :key="movie.imdbID"
+          :movie="movie" /> <!-- v-for의 movies는 computed로부터 오는 것 --> 
+      </div>
     </div>
   </div>
 </template>
@@ -12,7 +17,7 @@
 import MovieItem from '~/components/MovieItem'
 export default {
   components: {
-    MovieItem
+    MovieItem,
   },
   computed: {
     movies() {
@@ -24,7 +29,19 @@ export default {
       // 그렇게 채워진 movies 배열을 지금 여기서 읽어 오는 것이다.   
       // 이 메소드가 computed 옵션에 정의된 이유는 가장 최신의 movies를 읽어오기 위함이다.  
       return this.$store.state.movie.movies
+    },
+    message() {
+      return this.$store.state.movie.message
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.container {
+  .movies{
+    display: flex;
+    flex-wrap: wrap; // flex 줄바꿈 처리 
+    justify-content: center;
+  }
+}
+</style>

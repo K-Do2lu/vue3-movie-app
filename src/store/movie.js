@@ -45,35 +45,66 @@ export default {
       // 첫번째 매개변수(= context): state, mutations, getters 활용을 위한 매개변수
       // 두번째 매개변수(= payload): 다른 곳으로부터 들어오는 데이터, 매개변수 
       // 공식문서를 좀 읽어야 한다. 
-      const {title, type, number, year} = payload
-      const OMDB_API_KEY = '7035c60c'
-
-      // imdb API - 영화 검색 정보를 받아오는 API 
-      const res = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=1`) 
-      const {Search, totalResults } = res.data // imdb API에 보면 res 안에 저런 데이터가 들어있음 
-      commit('updateState', {
-        movies: _uniqBy(Search, 'imdbID') // imdbID라는 키를 기준으로 중복 값을 걸러준다. 
-      })
-      const total = parseInt(totalResults, 10) // totalResults를 10진법의 숫자로 변형한다.
-      const pageLength = Math.ceil(total/10) // total을 10으로 나눈값을 올림처리 - 페이지 개수 설정
-      
-      // 추가요청 
-      if (pageLength > 1) {
-        for(let page = 2; page <= pageLength; page += 1) {
-          if(page > (number / 10)) break  // 한 페이지에서 읽는 데이터의 수를 검증 number 기본값은 10
-          const res = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`)
-          const {Search} = res.data
-          commit('updateState', { 
-            // 기존의 movies의 데이터를 포함하고
-            // 새로 불러온 페이지의 검색결과를 추가하는 방법 
-            movies: [
-              ...state.movies,
-              ..._uniqBy(Search, 'imdbID')
-            ] // ... = 전개연산자 
-          }) 
+      try {
+        const res = await _fetchMovies({
+          ...payload,
+          page: 1
+        })
+        const {Search, totalResults } = res.data // imdb API에 보면 res 안에 저런 데이터가 들어있음 
+        commit('updateState', {
+          movies: _uniqBy(Search, 'imdbID') // imdbID라는 키를 기준으로 중복 값을 걸러준다. 
+        })
+        const total = parseInt(totalResults, 10) // totalResults를 10진법의 숫자로 변형한다.
+        const pageLength = Math.ceil(total/10) // total을 10으로 나눈값을 올림처리 - 페이지 개수 설정
+        
+        // 추가요청 
+        if (pageLength > 1) {
+          for(let page = 2; page <= pageLength; page += 1) {
+            if(page > (payload.number / 10)) break  // 한 페이지에서 읽는 데이터의 수를 검증 number 기본값은 10
+            const res = await _fetchMovies({
+              ...payload,
+              page // page: page 와 동일한 표현식
+            })
+            const {Search} = res.data
+            commit('updateState', { 
+              // 기존의 movies의 데이터를 포함하고
+              // 새로 불러온 페이지의 검색결과를 추가하는 방법 
+              movies: [
+                ...state.movies,
+                ..._uniqBy(Search, 'imdbID')
+              ] // ... = 전개연산자 
+            }) 
+          }
         }
+      } catch(message) {
+        commit('updateState', {
+          movies: [],
+          message // message: message
+        })
       }
-
     }
   }
+}
+
+// 언더바로 시작하는 함수는 현재 파일에서만 사용되는 함수임을 의미한다. 
+// fetchMovies(): 영화 데이터를 가져오는 메소드
+// 기존에 searchMovies안에 있던 내용인데 분리함.
+function _fetchMovies(payload) {
+  const { title, type, year, page} = payload
+  const OMDB_API_KEY = '7035c60c'
+  const url = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
+
+  return new Promise((resolve, reject) => {
+    axios.get(url)
+    .then((res) => {
+      if(res.data.Error) {
+        reject(res.data.Error)
+      }
+      resolve(res)
+    })
+    .catch((err) => {
+      reject(err.message)
+    }) 
+
+  })
 }
