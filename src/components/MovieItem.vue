@@ -37,6 +37,16 @@ export default {
   background-size: cover;
   overflow: hidden;
   position: relative;
+  &:hover::after { // & - 가상선택자, ::after - 가상요소
+    content: "";
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    border: 6px solid $primary;
+
+  }
   .info {
     position: absolute;
     width: 100%;
@@ -45,6 +55,17 @@ export default {
     background-color: rgba($black, 0.3);
     padding: 14px;
     text-align: center;
+    backdrop-filter: blur(10px);
+    .year {
+      color: $primary;
+
+    }
+    .title {
+      color: $white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 </style>
