@@ -10,7 +10,9 @@ export default {
 
   // state: 데이터를 의미한다.
   state: () => ({ // function() { return {}} 이거랑 () => ({}) 이거랑 동일하다.
-    movies: []
+    movies: [],
+    message: 'Search for the movie title!',
+    loading: false // 로딩 아이콘을 표시하기위한 값 
   }),
 
   // getters: state를 사용하여 computed와 동일한 기능을 수행한다.
@@ -45,6 +47,16 @@ export default {
       // 첫번째 매개변수(= context): state, mutations, getters 활용을 위한 매개변수
       // 두번째 매개변수(= payload): 다른 곳으로부터 들어오는 데이터, 매개변수 
       // 공식문서를 좀 읽어야 한다. 
+      
+      if (state.loading) return
+      // 최초에는 loading === false 
+      // return 키워드만 남겨두면 메소드가 종료됨. 
+      // searchMovies 함수를 동시에 여러번 실행되는 것을 방지하기 위함 
+
+      commit('updateState', {
+        message: '', // message 초기화, message가 넘어온다. 
+        loading: true // 로딩 아이콘을 표시하기위한 값 
+      })
       try {
         const res = await _fetchMovies({
           ...payload,
@@ -81,6 +93,10 @@ export default {
           movies: [],
           message // message: message
         })
+      } finally {
+        commit('updateState', {
+          loading: false
+        })
       }
     }
   }
@@ -95,7 +111,7 @@ function _fetchMovies(payload) {
   const url = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
 
   return new Promise((resolve, reject) => {
-    axios.get(url)
+    axios.get(url) 
     .then((res) => {
       if(res.data.Error) {
         reject(res.data.Error)
@@ -105,6 +121,5 @@ function _fetchMovies(payload) {
     .catch((err) => {
       reject(err.message)
     }) 
-
   })
 }
