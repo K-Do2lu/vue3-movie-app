@@ -16,7 +16,8 @@ export default createRouter({
       component: Home // 메인 페이지에 연결할 컴포넌트 
     },
     {
-      path: '/movie', 
+      // movie/tt123456 의 형태로 사용할 수 있음
+      path: '/movie/:id', // 파라미터를 정의하여 영화의 ID값을 받아와 사용함 ==> Movie.vue에서 넘어옴
       component: Movie 
     },
     {

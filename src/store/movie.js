@@ -12,7 +12,8 @@ export default {
   state: () => ({ // function() { return {}} 이거랑 () => ({}) 이거랑 동일하다.
     movies: [],
     message: 'Search for the movie title!',
-    loading: false // 로딩 아이콘을 표시하기위한 값 
+    loading: false, // 로딩 아이콘을 표시하기위한 값
+    theMovie: {} // 단일 영화의 상세 정보를 담기위한 객체 
   }),
 
   // getters: state를 사용하여 computed와 동일한 기능을 수행한다.
@@ -42,7 +43,7 @@ export default {
   // 3. context는 state, getters, commit을 포함하고 있다. 
   // 4. 객체 구조분해를 사용하면 context = {state, getters, commit} 이다. 
   actions:{
-    async searchMovies({state, commit}, payload) { 
+    async searchMovies({state, commit}, payload) { // 여러 영화의 정보를 가져오는 API 메소드
       // context 또는 payload라는 매개변수의 이름은 언제든지 바뀔 수 있다.
       // 첫번째 매개변수(= context): state, mutations, getters 활용을 위한 매개변수
       // 두번째 매개변수(= payload): 다른 곳으로부터 들어오는 데이터, 매개변수 
@@ -57,6 +58,7 @@ export default {
         message: '', // message 초기화, message가 넘어온다. 
         loading: true // 로딩 아이콘을 표시하기위한 값 
       })
+
       try {
         const res = await _fetchMovies({
           ...payload,
@@ -98,6 +100,30 @@ export default {
           loading: false
         })
       }
+    },
+    async searchMovieWithId({state, commit}, payload) {
+      if(state.loading) return
+
+      commit('updateState', {
+        theMovie: {}, //메소드가 실행될 때마다 객체를 초기화
+        loading: true
+      })
+
+      try{
+        const res = await _fetchMovies(payload)
+        console.log(res)
+        commit('updateState', {
+          theMovie: res.data
+        })
+      }catch (error){
+        commit('updateState',{
+          theMovies: {}
+        })
+      } finally {
+        commit('updateState', {
+          loading: false
+        })
+      }
     }
   }
 }
@@ -106,9 +132,11 @@ export default {
 // fetchMovies(): 영화 데이터를 가져오는 메소드
 // 기존에 searchMovies안에 있던 내용인데 분리함.
 function _fetchMovies(payload) {
-  const { title, type, year, page} = payload
+  const { title, type, year, page, id} = payload
   const OMDB_API_KEY = '7035c60c'
-  const url = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
+  const url = id  // id값이 있는 경우와 없는 경우를 나눈 삼항연산자
+  ? `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}` 
+  : `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
 
   return new Promise((resolve, reject) => {
     axios.get(url) 
