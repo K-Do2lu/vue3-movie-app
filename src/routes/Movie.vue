@@ -102,7 +102,13 @@ export default {
     })
   },
   methods: {
-    requestDiffSizeImage(url, size = 700) { // url을 사용한 이미지 리사이징 
+    requestDiffSizeImage(url, size = 700) {
+      // url을 사용한 이미지 리사이징
+      if(!url || url === 'N/A') { // 포스터 정보가 없어서 배경이미지를 대체해야 되는 경우 
+        this.imageLoading = false
+        return '' // 포스터가 없는경우 빈 문자데이터를 반환함(아무것도 표시안됨) 
+      } 
+      //아래의 코드는 위의 if 조건문에 걸리지 않으면 실행될 코드 => 이미지 리사이징
       const src = url.replace('SX300', `SX${size}`)
       this.$loadImage(src)
         .then(() => {
@@ -217,6 +223,34 @@ export default {
       color: black;
       font-family: 'Oswald',sans-serif;
       font-size: 20px;
+    }
+  }
+  @include media-breakpoint-down(xl) {
+    .poster {
+      width: 300px;
+      height: 300px * 3/2;
+      margin-right: 40px;
+    }
+  }
+  @include media-breakpoint-down(lg) {
+    display: block;
+    .poster {
+      margin-bottom: 40px;
+    }
+  }
+  @include media-breakpoint-down(md) {
+    .specs {
+      .title {
+        font-size: 50px;
+      }
+      .ratings {
+        .rating-wrap {
+          display: block;
+          .rating {
+            margin-top: 10px;
+          }
+        }
+      }
     }
   }
 }

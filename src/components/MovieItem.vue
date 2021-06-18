@@ -1,22 +1,22 @@
 <template>
-  <div>
-    <div
-      :style="{ backgroundImage: `url(${movie.Poster})` }"
-      class="movie">
-      <Loader 
-        v-if="imageLoading" 
-        :size="1.5"
-        absolute />
-      <div class="info">
-        <div class="year">
-          {{ movie.Year }}
-        </div>
-        <div class="title">
-          {{ movie.Title }}
-        </div>
+  <!-- 라우터 링크를 사용하여 검색된 영화를 클릭하면 상세페이지로 나오도록 하는 기능 -->
+  <RouterLink
+    :to="`/movie/${movie.imdbID}`"
+    :style="{ backgroundImage: `url(${movie.Poster})` }"
+    class="movie">
+    <Loader 
+      v-if="imageLoading" 
+      :size="1.5"
+      absolute />
+    <div class="info">
+      <div class="year">
+        {{ movie.Year }}
+      </div>
+      <div class="title">
+        {{ movie.Title }}
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 <script>
 import Loader from '~/components/Loader'
@@ -49,11 +49,14 @@ export default {
       // // 만약 function() {return} 이런 형식으로 사용하면 this는 메소드 내의 변수에만 접근 가능하기 때문
       //   this.imageLoading = false // 이미지 로딩이 완료되면 false로 바꿈 
       // }) 이 부분이 loadImage.js에 정의한 plugin으로 대체됨. 아래는 플러그인 호출하는 코드
-      
-      await this.$loadImage(this.movie.Poster)
-      // loadImage 플러그인이 비동기로 promise를 반환하기 때문에 async와 await 키워드를 붙여줌
-      this.imageLoading = false
-
+      const poster = this.movie.Poster
+      if(!poster || poster==='N/A') { // 포스터 정보가 없을때의 예외처리
+        this.imageLoading = false
+      } else {
+        await this.$loadImage(poster) // loadImage: 플러그인
+        // loadImage 플러그인이 비동기로 promise를 반환하기 때문에 async와 await 키워드를 붙여줌
+        this.imageLoading = false
+      }
     }
   }
 }

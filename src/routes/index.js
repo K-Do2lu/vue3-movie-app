@@ -2,6 +2,7 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from './Home'
 import Movie from './Movie'
 import About from './About'
+import NotFound from './NotFound'
 
 
 export default createRouter({
@@ -23,6 +24,11 @@ export default createRouter({
     {
       path: '/about', 
       component: About 
+    },
+    {
+      // vue router next 공식문서 - dynamic route matching - 404 처리 참고
+      path:'/:notFound(.*)', // 404 not found 처리, notFound 라는 문자는 대체가능
+      component: NotFound
     }
   ]
 })
