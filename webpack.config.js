@@ -42,7 +42,12 @@ module.exports = {
           'style-loader',
           'css-loader',
           'postcss-loader',
-          'sass-loader'
+          { // 각 컴포넌트의 script 태그에서 @import 키워드를 통해 가져오던 부트스트랩 스타일을 전역로딩으로 바꿈 
+            loader: 'sass-loader',
+            options: {
+              additionalData: '@import "~/scss/main";'
+            }
+          }
         ]
       },
       {

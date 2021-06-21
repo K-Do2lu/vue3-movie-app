@@ -7,7 +7,6 @@
 </template>
 
 <style lang="scss" scoped>
-@import "~/scss/main"; // main.scss 가져오기
 .logo {
   font-family: "Oswald", sans-serif;
   font-size: 20px;

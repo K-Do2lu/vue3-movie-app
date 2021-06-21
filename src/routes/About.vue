@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+import {mapState} from 'vuex'
 import Loader from '~/components/Loader'
 
 export default {
@@ -29,21 +30,16 @@ export default {
     }
   },
   computed: {
-    image() {
-      return this.$store.state.about.image
-    },
-    name() {
-      return this.$store.state.about.name
-    },
-    email() {
-      return this.$store.state.about.email
-    },
-    phone() {
-      return this.$store.state.about.phone
-    },
-    blog() {
-      return this.$store.state.about.blog
-    }
+    ...mapState('about', [ // state의 about이라는 모듈 안에 있는 데이터를 가져온다는 의미
+      // 전개연산자(...)를 사용하는 이유는 
+      // mapState()에서 반환된 결과가 computed 객체데이터 내부에서 등록 되도록 하기 위함. 
+      'image',
+      'name',
+      'email',
+      'phone',
+      'blog'
+    ]
+    ),
   },
   mounted() { // 라이프 사이클에서는 비동기 처리가 안됨
     this.init()
@@ -57,7 +53,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "~/scss/main";
 
 .about {
   text-align: center;

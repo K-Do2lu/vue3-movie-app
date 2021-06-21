@@ -16,8 +16,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-@import "~/scss/main"; // scss 파일 연동 
-
-</style>
