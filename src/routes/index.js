@@ -10,6 +10,12 @@ export default createRouter({
   // -Hash 모드: https://google.com/#/home 처럼 # 기호를 사용하는 주소체계 
   history:createWebHashHistory(), 
 
+  // 화면 전환시 스크롤이 최상단에 위치하도록 하는 기능 
+  // vue router 공식문서에서 advanced 부분에서 scroll behavior찾아볼 수 있음 
+  scrollBehavior() {
+    return {top: 0}
+  },
+
   // page 담당 
   routes: [
     {

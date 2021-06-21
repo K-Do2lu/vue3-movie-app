@@ -4,6 +4,9 @@ import _uniqBy from 'lodash/uniqBy'
 // uniqBy: 객체 데이터가 담긴 배열에서 특정 값(ex. key)을 기준으로 설정하여 
 //         배열의 중복값을 제거하는 라이브러리
 
+// 언더바(_)를 갖는 변수명은 해당 파일에서만 사용하는 변수임을 명시함 
+const _defaultMessage = 'Search for the movie title!'
+
 export default {
   // namespaced: 스토어 모듈임을 명시하는 속성(boolean)
   namespaced: true,
@@ -11,15 +14,15 @@ export default {
   // state: 데이터를 의미한다.
   state: () => ({ // function() { return {}} 이거랑 () => ({}) 이거랑 동일하다.
     movies: [],
-    message: 'Search for the movie title!',
+    message: _defaultMessage,
     loading: false, // 로딩 아이콘을 표시하기위한 값
     theMovie: {} // 단일 영화의 상세 정보를 담기위한 객체 
   }),
 
-  // getters: state를 사용하여 computed와 동일한 기능을 수행한다.
+  // getters: state를 사용하여 computed와 동일한 기능을 수행한다.(일방통행 - state 값 변경 불가)
   getters:{},
 
-  // mutations: methods와 동일한 기능을 수행한다.
+  // mutations: methods와 동일한 기능을 수행한다.(쌍방통행 - state 값 변경 가능 )
   // 주의사항: mutations를 통해서만 state의 값을 변경할 수 있다. 다른 곳에서는 값을 변경할 수 없다. 
   mutations: {
     updateState(state, payload) { 
@@ -31,17 +34,23 @@ export default {
       }) 
 
     },
-    resetMovies(state) {
+    resetMovies(state) { // 상태(state)값 초기화 
       state.movies = []
+      state.message = _defaultMessage
+      state.loading = false
     }
   },
 
-  // actions: 값을 변경하는 메소드는 mutations에 작성하고 나머지 메소드는 actions에 작성한다.
-  // 주의사항
-  // 1. actions는 비동기적으로 작동한다. 
+  // actions: mutations에 작성되는 이외의 메소드는 actions에 작성한다.(일방통행 - state 값 변경 불가)
+  // context라는 매개변수를 통해 state, getters, mutations에 접근하여 데이터를 사용할 수 있다.  
+  
+  // 알아야 할 것
+  // 1. actions는 비동기적으로 사용할 수 있다. 
   // 2. actions는 state가 아닌 context에 접근이 가능하다. (context가 state를 포함하는 더 큰 개념)
-  // 3. context는 state, getters, commit을 포함하고 있다. 
-  // 4. 객체 구조분해를 사용하면 context = {state, getters, commit} 이다. 
+  // 3. context는 state, getters, commit, dispatch을 포함하고 있다. 
+  // 4. context를 객체 구조분해하면 context = {state, getters, commit, dispatch} 이다. 
+  // 5. commit은 mutations에 접근할 때 사용한다. 
+  // 6. dispatch는 actions에 접근할 때 사용한다. 
   actions:{
     async searchMovies({state, commit}, payload) { // 여러 영화의 정보를 가져오는 API 메소드
       // context 또는 payload라는 매개변수의 이름은 언제든지 바뀔 수 있다.
@@ -54,7 +63,7 @@ export default {
       // return 키워드만 남겨두면 메소드가 종료됨. 
       // searchMovies 함수를 동시에 여러번 실행되는 것을 방지하기 위함 
 
-      commit('updateState', {
+      commit('updateState', { // updateState() - mutations에 등록되어 있는 함수 
         message: '', // message 초기화, message가 넘어온다. 
         loading: true // 로딩 아이콘을 표시하기위한 값 
       })
