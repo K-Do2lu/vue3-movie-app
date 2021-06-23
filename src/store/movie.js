@@ -32,7 +32,6 @@ export default {
       Object.keys(payload).forEach(key => {
         state[key] = payload[key]
       }) 
-
     },
     resetMovies(state) { // 상태(state)값 초기화 
       state.movies = []
@@ -99,10 +98,10 @@ export default {
             }) 
           }
         }
-      } catch(message) {
+      } catch(error) { // error객체를 안쓰고 구조분해를 통해 {message}로 또한 사용가능 
         commit('updateState', {
           movies: [],
-          message // message: message
+          message: error.message
         })
       } finally {
         commit('updateState', {
@@ -140,23 +139,29 @@ export default {
 // 언더바로 시작하는 함수는 현재 파일에서만 사용되는 함수임을 의미한다. 
 // fetchMovies(): 영화 데이터를 가져오는 메소드
 // 기존에 searchMovies안에 있던 내용인데 분리함.
-function _fetchMovies(payload) {
-  const { title, type, year, page, id} = payload
-  const OMDB_API_KEY = '7035c60c'
-  const url = id  // id값이 있는 경우와 없는 경우를 나눈 삼항연산자
-  ? `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}` 
-  : `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
+async function _fetchMovies(payload) {
+  // GET이 아니라 POST를 사용하는 이유 - 보안
+  // GET - 데이터를 URL에 포함시켜서 넘김 
+  // POST - 데이터를 문자열로 변환하여 body에 담아서 전달함. URL에 표시안됨
+  return await axios.post('/.netlify/functions/movie', payload) // 매개변수 - 전달할 페이지, 전달할 데이터
 
-  return new Promise((resolve, reject) => {
-    axios.get(url) 
-    .then((res) => {
-      if(res.data.Error) {
-        reject(res.data.Error)
-      }
-      resolve(res)
-    })
-    .catch((err) => {
-      reject(err.message)
-    }) 
-  })
+  // serverless 함수 사용으로 인해 더이상 사용하지 않는 코드 
+  // const { title, type, year, page, id} = payload
+  // const OMDB_API_KEY = '7035c60c'
+  // const url = id  // id값이 있는 경우와 없는 경우를 나눈 삼항연산자
+  // ? `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}` 
+  // : `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
+
+  // return new Promise((resolve, reject) => {
+  //   axios.get(url) 
+  //   .then((res) => {
+  //     if(res.data.Error) {
+  //       reject(res.data.Error)
+  //     }
+  //     resolve(res)
+  //   })
+  //   .catch((err) => {
+  //     reject(err.message)
+  //   }) 
+  // })
 }
