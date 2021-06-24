@@ -3,6 +3,7 @@ const path = require('path') // node 모듈을 import 해오는 기본방법
 const HtmlPlugin = require('html-webpack-plugin') // webpack plugin 모듈 가져오기 
 const CopyPlugin = require('copy-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
+const Dotenv = require('dotenv-webpack')
 
 // export
 module.exports = {
@@ -73,7 +74,8 @@ module.exports = {
         { from: 'static' } // static 폴더 안의 내용이 dist로 복사되어 들어가도록 한다. 
       ]
     }),
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new Dotenv()
   ],
 
   devServer: {

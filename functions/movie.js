@@ -2,7 +2,7 @@
 // 그러므로 node js 환경에서는 import/export를 사용하지 않고 
 // require/exports 라는 객체를 이용한다. 
 const axios = require('axios') // axios 사용을 위한 패키지 가져오기 
-
+const { OMDB_API_KEY } = process.env
 
 exports.handler = async function(event) { // 사용 가능한 매개변수는 event와 context가 있다.  
   // serverless 함수는 반드시 비동기로 동작해야 한다.
@@ -12,7 +12,9 @@ exports.handler = async function(event) { // 사용 가능한 매개변수는 ev
   // payload는 JSON 객체 형태를 갖고 있기 때문에 JSON.parse()를 통하여 다시 JSON화 시켜준다. 
   const payload = JSON.parse(event.body)
   const { title, type, year, page, id} = payload
-  const OMDB_API_KEY = '7035c60c'
+
+  //const OMDB_API_KEY = '7035c60c' ==> .env파일에서 넘어오도록 전역변수를 위에 설정함
+
   const url = id  // id값이 있는 경우와 없는 경우를 나눈 삼항연산자
   ? `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}` 
   : `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
