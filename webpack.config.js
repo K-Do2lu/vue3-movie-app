@@ -78,7 +78,10 @@ module.exports = {
     new Dotenv()
   ],
 
+  // 개발서버 옵션
   devServer: {
-    host:'localhost'
+    host:'localhost',
+    port: 8079,
+    hot: true
   }
 } 
