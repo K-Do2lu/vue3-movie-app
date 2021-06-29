@@ -53,7 +53,7 @@ export default {
   actions:{
     async searchMovies({state, commit}, payload) { // 여러 영화의 정보를 가져오는 API 메소드
       // context 또는 payload라는 매개변수의 이름은 언제든지 바뀔 수 있다.
-      // 첫번째 매개변수(= context): state, mutations, getters 활용을 위한 매개변수
+      // 첫번째 매개변수(= context): state, mutations, getters, commit 활용을 위한 매개변수
       // 두번째 매개변수(= payload): 다른 곳으로부터 들어오는 데이터, 매개변수 
       // 공식문서를 좀 읽어야 한다. 
       
@@ -119,7 +119,7 @@ export default {
 
       try{
         const res = await _fetchMovies(payload)
-        console.log(res)
+        console.log("res = ", res)
         commit('updateState', {
           theMovie: res.data
         })

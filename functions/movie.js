@@ -34,7 +34,8 @@ exports.handler = async function(event) { // 사용 가능한 매개변수는 ev
       statusCode: 200,
       body: JSON.stringify(data) 
       // data는 json 형태의 데이터를 갖고 있기 때문에
-      // stringify를 사용하여 문자 형식으러 변경한다. 
+      // stringify를 사용하여 문자 형식으로 변경한다.
+      // 왜냐면 body에는 문자 데이터만 담을 수 있기 때문이다.  
     }
 
   } catch (error) {

@@ -94,7 +94,7 @@ export default {
     ])
   },
   created() {
-    console.log(this.$route)
+    console.log("route =>", this.$route)
     this.$store.dispatch('movie/searchMovieWithId', {
       // movie/tt123456
       id: this.$route.params.id 

@@ -74,8 +74,8 @@ module.exports = {
         { from: 'static' } // static 폴더 안의 내용이 dist로 복사되어 들어가도록 한다. 
       ]
     }),
-    new VueLoaderPlugin(),
-    new Dotenv()
+    new VueLoaderPlugin(), // vue로더를 연결시키기 위한 플러그인 
+    new Dotenv() // .env를 연결시키기 위한 플러그인 
   ],
 
   // 개발서버 옵션
